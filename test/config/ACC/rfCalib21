@@ -1,14 +1,14 @@
 addpath 2
-/home/deyun/git/AutoPatch
-/home/deyun/git/breach
+/path/to/ContrRep_ASEJ
+/path/to/breach
 bench 1
 ACC
 benchType 1
 simulink
 model 1
-ACC_FFNN_trainoss_30_30_30_ep_100_Nor_20250528
+ACC4_FFNN_trainoss_30_30_30_ep_100_Nor_20250528
 modelCopy 1
-ACC_FFNN_trainoss_30_30_30_ep_100_Nor_20250528
+ACC4_FFNN_trainoss_30_30_30_ep_100_Nor_20250528
 dataset_run 1
 Nor_ACC_vl_28_ve_22_ddefault_105_spec_1_Orig_IC_5_Feb_7.mat
 is_nor 1
@@ -36,7 +36,7 @@ a_ego
 oc_span 1
 0.1
 nn 1
-ACC_F_trainoss_30_30_30_config_ep_100_Nor_20250528.mat
+ACC4_F_trainoss_30_30_30_config_ep_100_Nor_20250528.mat
 nnStru 1
 [30,30,30,1]
 phi_str 1
@@ -56,7 +56,7 @@ amax_lead=1;
 amin_ego=-3;
 amax_ego=2;
 testSuite 1
-ACC_FFNN_trainoss_30_30_30_ep_100_Nor_20250528_testCaseNum_100.mat
+ACC4_FFNN_trainoss_30_30_30_ep_100_Nor_20250528_testCaseNum_100.mat
 testCaseNum 1
 100
 faultType 1
@@ -98,7 +98,7 @@ NULL
 popInitMode 1
 hybridGuass
 filePath 1
-/home/deyun/git/AutoPatch/results/ACC/DE/tops_35_popSize_70_gen_50/
+./results/ACC2_Phi1/DE/tops_35_popSize_70_gen_50/
 calibStep 1
 5
 coreNum 1

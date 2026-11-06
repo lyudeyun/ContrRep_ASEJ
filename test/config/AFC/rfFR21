@@ -1,14 +1,14 @@
 addpath 2
-/home/deyun/git/AutoPatch
-/home/deyun/git/breach
+/path/to/ContrRep_ASEJ
+/path/to/breach
 bench 1
 AFC
 benchType 1
 simulink
 model 1
-AFC_FFNN_trainrp_15_15_15_15_ep_1000_Nor_20250519
+AFC1_FFNN_trainrp_15_15_15_15_ep_1000_Nor_20250519
 modelCopy 1
-AFC_FFNN_trainrp_15_15_15_15_ep_1000_Nor_20250519
+AFC1_FFNN_trainrp_15_15_15_15_ep_1000_Nor_20250519
 dataset_run 1
 AFC_mu_020_spec_1_Orig_Jan_6_Tr_Nor.mat
 is_nor 1
@@ -31,7 +31,7 @@ cf_gps
 oc_span 1
 0.1
 nn 1
-AFC_F_trainrp_15_15_15_15_config_ep_1000_Nor_20250519.mat
+AFC1_F_trainrp_15_15_15_15_config_ep_1000_Nor_20250519.mat
 nnStru 1
 [15,15,15,15,1]
 phi_str 1
@@ -101,6 +101,8 @@ crSgy 1
 1
 pertFactor 1
 0.5
+scaleParam 1
+2
 initMode 1
 internal
 initFolder 1
@@ -109,3 +111,5 @@ popInitMode 1
 hybridGuass
 coreNum 1
 20
+autoSync 1
+0

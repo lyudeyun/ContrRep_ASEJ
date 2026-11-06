@@ -1,6 +1,6 @@
 addpath 2
-/home/deyun/git/AutoPatch
-/home/deyun/git/breach
+/path/to/ContrRep_ASEJ
+/path/to/breach
 bench 1
 MC
 benchType 1
@@ -76,7 +76,7 @@ NULL
 popInitMode 1
 hybridGuass
 filePath 1
-/home/deyun/git/AutoPatch/results/MC/DE/tops_5_popInitMode_hybridGuass_popSize_10_gen_50
+./results/MC/DE/tops_5_popInitMode_hybridGuass_popSize_10_gen_50/
 calibStep 1
 5
 coreNum 1

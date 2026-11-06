@@ -33,19 +33,10 @@ function [fitnessVal, robList] = simulinkFitness(mdlInfo, simConf, searchConf, t
 %   fitnessVal - Computed fitness score for the current individual
 %   robList    - Robustness values for each test case after applying the patch
 
-% Generate a simplified model name
-mdlName = ['mdl_g_', num2str(searchConf.geni), '_p_', num2str(searchConf.popi), '_', searchConf.deFlag];
-mdlPath = fullfile(pwd, [mdlName, '.slx']);
-
-% Close if model already loaded
-if bdIsLoaded(mdlName), bdclose(mdlName); end
-if isfile(mdlPath), delete(mdlPath); end
-
-replaceWeights(mdlInfo.faultyMdl, mdlInfo.oriWeights, searchConf.altWeights, mdlInfo.spsWeights, mdlName);
-
-% Run simulation
-Br = BreachSimulinkSystem(mdlName); % reuse Br to accelerate simulation
-Br.Sys.tspan = 0:simConf.Ts:simConf.T;
+% The model is loaded once per worker and kept in fast restart; evaluating an
+% individual only pushes its weights into the already-compiled model.
+h = fastRobOpen(mdlInfo, simConf);
+fastRobSetWeights(h, searchConf.altWeights);
 
 if searchConf.earlyCutOff
     estRobList = nan(testSuite.size, 1);
@@ -56,7 +47,7 @@ if contains(searchConf.fitnessMode, 'exp')
     % Reverse iteration improves early termination effectiveness
     for tci = testSuite.size:-1:1
         sysInputs = testSuite.testCases(tci).sysInputs;
-        [testSuite.testCases(tci).newRob, Br] = calRob(mdlName, Br, simConf.T, simConf.Ts, simConf.in_name, simConf.in_span, simConf.phi, sysInputs);
+        testSuite.testCases(tci).newRob = fastRob(h, sysInputs);
         % Early Cut-off
         if searchConf.earlyCutOff
             estRobList(tci) = testSuite.testCases(tci).newRob;
@@ -64,8 +55,6 @@ if contains(searchConf.fitnessMode, 'exp')
             if estFitnessVal < searchConf.prevPopFitness(searchConf.popi)
                 fitnessVal = estFitnessVal;
                 robList = estRobList;
-                if bdIsLoaded(mdlName), close_system(mdlName, 0); end
-                if isfile(mdlPath), delete(mdlPath); end
                 return;
             end
         end
@@ -77,12 +66,12 @@ elseif contains(searchConf.fitnessMode, 'cheapincr')
     [testSuite.testCases(negStartIdx:end).newRob] = deal(-Inf);
     for tci = negStartIdx:testSuite.size
         sysInputs = testSuite.testCases(tci).sysInputs;
-        [testSuite.testCases(tci).newRob, Br] = calRob(mdlName, Br, simConf.T, simConf.Ts, simConf.in_name, simConf.in_span, simConf.phi, sysInputs);
+        testSuite.testCases(tci).newRob = fastRob(h, sysInputs);
         if testSuite.testCases(tci).newRob < 0, break; end
     end
     for tci = posEndIdx:-1:1
         sysInputs = testSuite.testCases(tci).sysInputs;
-        [testSuite.testCases(tci).newRob, Br] = calRob(mdlName, Br, simConf.T, simConf.Ts, simConf.in_name, simConf.in_span, simConf.phi, sysInputs);
+        testSuite.testCases(tci).newRob = fastRob(h, sysInputs);
         if testSuite.testCases(tci).newRob > 0, break; end
     end
 elseif strcmp(searchConf.fitnessMode, 'calib')
@@ -94,7 +83,7 @@ elseif strcmp(searchConf.fitnessMode, 'calib')
     if isempty(posInfi)
         idxRange = 1:negInfi-1;
     elseif isempty(negInfi)
-        idxRange = posInfi+1:100;
+        idxRange = posInfi+1:testSuite.size;
     else
         idxRange = posInfi+1:negInfi-1;
     end
@@ -106,14 +95,14 @@ elseif strcmp(searchConf.fitnessMode, 'calib')
     if ~isempty(negInfi)
         for tci = testSuite.size:-1:negInfi
             sysInputs = testSuite.testCases(tci).sysInputs;
-            [testSuite.testCases(tci).newRob, Br] = calRob(mdlName, Br, simConf.T, simConf.Ts, simConf.in_name, simConf.in_span, simConf.phi, sysInputs);
+            testSuite.testCases(tci).newRob = fastRob(h, sysInputs);
         end
     end
     
     if ~isempty(posInfi)
         for tci = posInfi:-1:1
             sysInputs = testSuite.testCases(tci).sysInputs;
-            [testSuite.testCases(tci).newRob, Br] = calRob(mdlName, Br, simConf.T, simConf.Ts, simConf.in_name, simConf.in_span, simConf.phi, sysInputs);
+            testSuite.testCases(tci).newRob = fastRob(h, sysInputs);
         end
     end
 end
@@ -124,7 +113,4 @@ end
 
 fitnessVal = feval(searchConf.fitnessMode, [testSuite.testCases.rob]', [testSuite.testCases.newRob]');
 robList = [testSuite.testCases.newRob]';
-
-if bdIsLoaded(mdlName), close_system(mdlName, 0); end
-if isfile(mdlPath), delete(mdlPath); end
 end

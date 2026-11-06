@@ -1,6 +1,6 @@
 addpath 2
-/home/deyun/git/AutoPatch
-/home/deyun/git/breach
+/path/to/ContrRep_ASEJ
+/path/to/breach
 bench 1
 AFC
 benchType 1
@@ -97,7 +97,7 @@ NULL
 popInitMode 1
 hybridGuass
 filePath 1
-/home/deyun/git/AutoPatch/results/AFC/DE/tops_10_popSize_20_gen_50/
+./results/AFC1_Phi2/DE/tops_10_popSize_20_gen_50/
 calibStep 1
 5
 coreNum 1

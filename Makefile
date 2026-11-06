@@ -1,23 +1,15 @@
-SH=$(wildcard test/scripts/*)
-CSV=$(SH:test/scripts/%=results/%.csv)
-DIRS=results output
+# Runs every job script in test/scripts, written by the generators in test/; the output of each job
+# is logged to output/<job>.log. 'make clean' removes the files Simulink leaves in the root.
+# A job skips the runs whose result file already exists, so an interrupted 'make' can be resumed.
 
-.PHONY: all scalac
+JOBS := $(notdir $(wildcard test/scripts/*))
 
-all: $(DIRS) $(CSV)
-	# git commit -m "new benchmark results"
+.PHONY: all clean $(JOBS)
 
-results:
-	mkdir -p $@
+all: $(JOBS)
 
-output:
-	mkdir -p $@
+$(JOBS):
+	./run $@ test/scripts/$@
 
-results/%.csv: test/scripts/%
-	./run $* $< $@
-	# git add $@
-
-benchmarks.jar: Manifest.txt
-	jar cfm $@ Manifest.txt -C bin .
 clean:
-	rm *.dat *.slxc *mex*
+	rm -f *.dat *.slxc *mex*

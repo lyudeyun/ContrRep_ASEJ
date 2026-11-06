@@ -1,14 +1,14 @@
 addpath 2
-/home/deyun/git/AutoPatch
-/home/deyun/git/breach
+/path/to/ContrRep_ASEJ
+/path/to/breach
 bench 1
 AFC
 benchType 1
 simulink
 model 1
-AFC_FFNN_trainscg_15_15_15_ep_1000_Nor_20250518
+AFC1_FFNN_trainscg_15_15_15_ep_1000_Nor_20250518
 modelCopy 1
-AFC_FFNN_trainscg_15_15_15_ep_1000_Nor_20250518
+AFC1_FFNN_trainscg_15_15_15_ep_1000_Nor_20250518
 dataset_run 1
 AFC_mu_020_spec_1_Orig_Jan_6_Tr_Nor.mat
 is_nor 1
@@ -31,7 +31,7 @@ cf_gps
 oc_span 1
 0.1
 nn 1
-AFC_F_trainscg_15_15_15_config_ep_1000_Nor_20250518.mat
+AFC1_F_trainscg_15_15_15_config_ep_1000_Nor_20250518.mat
 nnStru 1
 [15,15,15,1]
 phi_str 1
@@ -55,7 +55,7 @@ max_Pedal_Angle=61.1;
 max_cf_gps=1.66;
 min_cf_gps=0.13;
 testSuite 1
-AFC_FFNN_trainscg_15_15_15_ep_1000_Nor_20250518_testCaseNum_100.mat
+AFC1_FFNN_trainscg_15_15_15_ep_1000_Nor_20250518_testCaseNum_100.mat
 testCaseNum 1
 100
 faultType 1
@@ -97,7 +97,7 @@ NULL
 popInitMode 1
 hybridGuass
 filePath 1
-/home/deyun/git/AutoPatch/results/AFC/DE/tops_10_popSize_20_gen_50/
+./results/AFC1_Phi1/DE/tops_10_popSize_20_gen_50/
 calibStep 1
 5
 coreNum 1

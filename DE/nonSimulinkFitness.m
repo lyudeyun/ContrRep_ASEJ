@@ -91,7 +91,7 @@ elseif strcmp(searchConf.fitnessMode, 'calib')
     if isempty(posInfi)
         idxRange = 1:negInfi-1;
     elseif isempty(negInfi)
-        idxRange = posInfi+1:100;
+        idxRange = posInfi+1:testSuite.size;
     else
         idxRange = posInfi+1:negInfi-1;
     end

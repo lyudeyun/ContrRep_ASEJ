@@ -1,6 +1,6 @@
 addpath 2
-/home/deyun/git/AutoPatch
-/home/deyun/git/breach
+/path/to/ContrRep_ASEJ
+/path/to/breach
 bench 1
 ACC
 benchType 1
@@ -102,6 +102,8 @@ crSgy 1
 1
 pertFactor 1
 0.5
+scaleParam 1
+2
 initMode 1
 internal
 initFolder 1
@@ -110,3 +112,5 @@ popInitMode 1
 hybridGuass
 coreNum 1
 20
+autoSync 1
+0

@@ -1,3 +1,4 @@
+import os
 import sys
 # path
 addpath = []
@@ -166,7 +167,6 @@ for phi_i in range(len(phi_str)):
 		property = phi_str[phi_i].split(';')
 		filename = model + '_spec_' + str(phi_i + 1) +  '_testCaseNum_' + testCaseNum + '_calibstep_' + calibStep +  '_Calib'
 		print(filename)
-		logname = '\'./output/' + filename + '.log\''
 		param = '\n'.join(parameters)
 		with open('scripts/'+filename,'w') as bm:
 			bm.write('#!/bin/sh\n')
@@ -300,7 +300,7 @@ for phi_i in range(len(phi_str)):
 
 			# parallel computing
 			bm.write('coreNum = ' + coreNum + ';\n')
-			bm.write('myFLRepair = AutoPatch(bm, bmType, mdl, mdlCopy, D_run, is_nor, testSuite, testCaseNum, net, nn_stru, T, Ts, [], in_name, in_range, in_span, icc_name, ic_const, ics_name, oc_name, oc_span, phi_str);\n')
+			bm.write('myFLRepair = ContrRep(bm, bmType, mdl, mdlCopy, D_run, is_nor, testSuite, testCaseNum, net, nn_stru, T, Ts, [], in_name, in_range, in_span, icc_name, ic_const, ics_name, oc_name, oc_span, phi_str);\n')
 			
 			bm.write('folderPath = \'' + filePath + '\';\n')
 			bm.write('calibStep = ' + calibStep + ';\n')
@@ -311,7 +311,8 @@ for phi_i in range(len(phi_str)):
 			bm.write('delete(fullfile([\'*.slx.r202*\']));\n')
 			bm.write('delete(fullfile([\'*_breach.slxc\']));\n')
 			bm.write('rmdir(\'slprj\', \'s\');\n')
-			bm.write('logname = ' + logname + ';\n')
-			bm.write('sendEmail(logname);\n')
 			bm.write('quit force\n')
 			bm.write('EOF\n')
+
+		# the generated script is launched directly
+		os.chmod('scripts/' + filename, 0o755)

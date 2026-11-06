@@ -1,0 +1,92 @@
+addpath 2
+/path/to/ContrRep_ASEJ
+/path/to/breach
+bench 1
+MC
+benchType 1
+nonSimulink
+model 1
+mc_sig_2x16_broken
+modelCopy 1
+mc_sig_2x16_broken_cp
+testSuite 1
+MC_Phi_1_FFNN_16_16_XV_10_10_20250609.mat
+testCaseNum 1
+100
+in_name 2
+init_pos
+init_vel
+in_range 2
+-0.505 0.395
+-0.055 0.045
+in_span 1
+110
+ics_name 2
+traj_pos
+traj_vel
+oc_name 1
+throttle
+oc_span 1
+1
+nn 1
+mc_sig_2x16_broken_cp.yml
+nnStru 1
+[16,16,1]
+phi_str 1
+MC1 ev_[0,110](traj_pos[t] >= 0.45)
+parameters 2
+T=110;
+Ts=1;
+faultType 1
+undertrained
+flMode 1
+SpectAcle
+spsMetricList 5
+Tarantula
+Ochiai
+D3
+Jaccard
+Kulczynski2
+hci 1
+8
+mi 1
+5
+tops 1
+5
+searchMode 1
+DE
+fitnessMode 6
+expdis
+expcon1
+expcon3
+cheapincrdis
+cheapincrcon1
+cheapincrcon3
+budget 1
+5
+popDimRatio 1
+2
+maxGen 1
+50
+checkpointStep 1
+5
+F 1
+0.5
+CR 1
+0.9
+mutSgy 1
+1
+crSgy 1
+1
+pertFactor 1
+0.5
+scaleParam 1
+2
+initMode 1
+internal
+initFolder 1
+NULL
+popInitMode 1
+hybridGuass
+coreNum 1
+10

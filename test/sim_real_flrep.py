@@ -1,3 +1,4 @@
+import os
 import sys
 # path
 addpath = []
@@ -44,6 +45,7 @@ CR = ''
 mutSgy = ''
 crSgy = ''
 pertFactor = ''
+scaleParam = '2'
 initMode = ''
 initFolder = ''
 popInitMode = ''
@@ -52,6 +54,8 @@ fitnessModeList = []
 budget = ''
 # parallel computing 
 coreNum = ''
+# commit and push the results of each finished script
+autoSync = '0'
 # script parameters
 status = 0
 arg = ''
@@ -151,6 +155,8 @@ with open(sys.argv[1],'r') as conf:
 				popInitMode = argu[0]
 			elif arg == 'pertFactor':
 				pertFactor = argu[0]
+			elif arg == 'scaleParam':
+				scaleParam = argu[0]
 			elif arg == 'budget':
 				budget = argu[0]
 			elif arg == 'searchMode':
@@ -159,6 +165,8 @@ with open(sys.argv[1],'r') as conf:
 				fitnessModeList.append(argu[0])
 			elif arg == 'coreNum':
 				coreNum = argu[0]
+			elif arg == 'autoSync':
+				autoSync = argu[0]
 			else:
 				continue
 			if linenum == 0:
@@ -166,9 +174,8 @@ with open(sys.argv[1],'r') as conf:
 # script name 
 for phi_i in range(len(phi_str)):
 		property = phi_str[phi_i].split(';')
-		filename = model + '_spec_' + str(phi_i + 1) +  '_testCaseNum_' + testCaseNum + '_searchmode_' + searchMode + '_budget_' + budget + '_Repair'
+		filename = model + '_spec_' + str(phi_i + 1) +  '_testCaseNum_' + testCaseNum + '_scaleParam_' + scaleParam + '_searchmode_' + searchMode + '_budget_' + budget + '_Repair'
 		print(filename)
-		logname = '\'./output/' + filename + '.log\''
 		param = '\n'.join(parameters)
 		with open('scripts/'+filename,'w') as bm:
 			bm.write('#!/bin/sh\n')
@@ -194,6 +201,7 @@ for phi_i in range(len(phi_str)):
 			if testSuite != '':
 				bm.write('load(\'' + testSuite + '\');\n')
 			bm.write('testCaseNum = ' + testCaseNum + ';\n')
+			bm.write('assert(testSuite.size == testCaseNum && numel(testSuite.testCases) == testCaseNum && testSuite.sn == sum([testSuite.testCases.rob] > 0), \'TestSuiteError: inconsistent test suite metadata.\');\n')
 			# model parameters info
 			bm.write('bm = \'' + bench + '\';\n')
 			bm.write('bmType = \'' + benchType + '\';\n')
@@ -296,6 +304,7 @@ for phi_i in range(len(phi_str)):
 			bm.write('deParams.mutSgy = ' + mutSgy + ';\n')
 			bm.write('deParams.crSgy = ' + crSgy + ';\n')
 			bm.write('deParams.pertFactor = ' + pertFactor + ';\n')
+			bm.write('deParams.scaleParam = ' + scaleParam + ';\n')
 			bm.write('deParams.initMode = \'' + initMode + '\';\n')
 			bm.write('deParams.initFolder = \'' + initFolder + '\';\n')
 			bm.write('deParams.popInitMode = \'' + popInitMode + '\';\n')
@@ -313,7 +322,7 @@ for phi_i in range(len(phi_str)):
 			bm.write('coreNum = ' + coreNum + ';\n')
 			bm.write('rng(round(rem(now, 1)*1000000));\n')
 
-			bm.write('myFLRepair = AutoPatch(bm, bmType, mdl, mdlCopy, D_run, is_nor, testSuite, testCaseNum, net, nn_stru, T, Ts, [], in_name, in_range, in_span, icc_name, ic_const, ics_name, oc_name, oc_span, phi_str);\n')
+			bm.write('myFLRepair = ContrRep(bm, bmType, mdl, mdlCopy, D_run, is_nor, testSuite, testCaseNum, net, nn_stru, T, Ts, [], in_name, in_range, in_span, icc_name, ic_const, ics_name, oc_name, oc_span, phi_str);\n')
 			
 			# convert current CPS to a mutant
 			bm.write('mutant = struct();\n')
@@ -347,6 +356,8 @@ for phi_i in range(len(phi_str)):
 			bm.write('hci = ' + hci + ';\n')
 			bm.write('mi = ' + mi + ';\n')
 			bm.write('spsWeights = hyMCon(mi,hci).spsWeightList(1:tops,:);\n')
+			# a degenerate localization must stop the job, not silently waste the budget
+			bm.write('assertValidSpsWeights(spsWeights, [mdlCopy, \' K=\', num2str(tops)]);\n')
 			
 			bm.write('mutant.sps_weight = spsWeights;\n')
 
@@ -356,8 +367,14 @@ for phi_i in range(len(phi_str)):
 			bm.write('\t\t repLog_ID.K = tops;\n')
 			bm.write('\t\t repLog_ID.bi = bi;\n')
 			
-			bm.write('\t\t resNamePrefix = [mdlCopy, \'_bug_\', num2str(mutant.bug_lb), \'_\', num2str(mutant.bug_ub), \'_K_\', num2str(tops), \'_tssize_\', num2str(testCaseNum), \'_searchmode_\', searchMode, \'_fitmode_\', fitnessMode, \'_budget_\', num2str(bi)];\n')
+			bm.write('\t\t resNamePrefix = [mdlCopy, \'_bug_\', num2str(mutant.bug_lb), \'_\', num2str(mutant.bug_ub), \'_K_\', num2str(tops), \'_tssize_\', num2str(testCaseNum), \'_scaleParam_\', num2str(deParams.scaleParam), \'_searchmode_\', searchMode, \'_fitmode_\', fitnessMode, \'_budget_\', num2str(bi)];\n')
 			bm.write('\t\t deParams.resNamePrefix = resNamePrefix;\n')
+			bm.write('\t\t resultDir = fullfile(\'./results\', bm, searchMode, sprintf(\'tops_%d_popSize_%d_gen_%d\', tops, deParams.popSize, deParams.maxGen));\n')
+			bm.write('\t\t completedResult = dir(fullfile(resultDir, [resNamePrefix, \'_geni_*.mat\']));\n')
+			bm.write('\t\t if ~isempty(completedResult)\n')
+			bm.write('\t\t\t disp([\'Skipping completed result: \', completedResult(1).name]);\n')
+			bm.write('\t\t\t continue;\n')
+			bm.write('\t\t end\n')
 			bm.write('\t\t tic;\n')
 			bm.write('\t\t if strcmp(searchMode, \'DE\')\n')
 			bm.write('\t\t\t [bestIndLog, fullPopLog] = myFLRepair.altWeightSearch(faultType, mutant, \'N/A\', \'N/A\', flMode, spsWeights, fitnessMode, deParams, repLog_ID, coreNum, exConstParams, exNormParams);\n')
@@ -375,7 +392,37 @@ for phi_i in range(len(phi_str)):
 			bm.write('\t end\n')
 			bm.write('end\n')
 	
-			bm.write('logname = ' + logname + ';\n')
-			bm.write('sendEmail(logname);\n')
 			bm.write('quit force\n')
 			bm.write('EOF\n')
+
+			# With autoSync on, a finished script publishes what it produced, so
+			# several machines can share one queue and skip each other's runs.
+			if autoSync == '1':
+				# the repository is whichever addpath is not the Breach install, so
+				# this keeps working from the git2 / git3 clones and whatever order
+				# the config happens to list them in
+				repoPath = next((ap for ap in addpath if ap.rstrip('/').split('/')[-1] != 'breach'), addpath[0])
+				bm.write('\n')
+				bm.write('cd \'' + repoPath + '\' || exit 0\n')
+				# stage only what this script produces: its own result directory and
+				# the name pattern of its own fitmodes (bug bounds are computed in
+				# MATLAB, so they stay a wildcard)
+				resDir = './results/' + bench + '/' + searchMode + '/tops_' + tops + \
+					'_popSize_' + str(int(popDimRatio) * int(tops)) + '_gen_' + maxGen
+				for fm in fitnessModeList:
+					pat = resDir + '/' + modelCopy + '_bug_*_K_' + tops + '_tssize_' + testCaseNum + \
+						'_scaleParam_' + scaleParam + '_searchmode_' + searchMode + \
+						'_fitmode_' + fm + '_budget_*_geni_*.mat'
+					bm.write('for f in ' + pat + '; do [ -e "$f" ] && git add -- "$f"; done\n')
+				bm.write('git diff --cached --quiet && exit 0\n')
+				bm.write('git commit -q -m "results: ' + filename + ' ($(hostname))"\n')
+				bm.write('i=1\n')
+				bm.write('while [ $i -le 5 ]; do\n')
+				bm.write('\tgit pull --rebase --autostash -q && git push -q && exit 0\n')
+				bm.write('\tsleep $(( i * 15 ))\n')
+				bm.write('\ti=$(( i + 1 ))\n')
+				bm.write('done\n')
+				bm.write('echo "push failed; the commit is kept locally" >&2\n')
+
+		# the generated script is launched directly
+		os.chmod('scripts/' + filename, 0o755)

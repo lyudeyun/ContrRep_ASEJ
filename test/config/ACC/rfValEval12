@@ -1,0 +1,114 @@
+addpath 2
+/path/to/ContrRep_ASEJ
+/path/to/breach
+bench 1
+ACC
+benchType 1
+simulink
+model 1
+ACC5v_FFNN_traingdx_15_15_15_ep_50_Nor_20250702
+modelCopy 1
+ACC5v_FFNN_traingdx_15_15_15_ep_50_Nor_20250702
+dataset_run 1
+Nor_ACC_vl_28_ve_22_ddefault_105_spec_1_Orig_IC_5_Feb_7.mat
+is_nor 1
+1
+in_name 1
+in_lead
+in_range 1
+-1 1
+in_span 1
+5
+icc_name 2
+v_set
+t_gap
+ic_const 2
+30
+1.4
+ics_name 5
+v_set
+t_gap
+v_ego
+d_rel
+v_rel
+oc_name 1
+a_ego
+oc_span 1
+0.1
+nn 1
+ACC5v_F_traingdx_15_15_15_config_ep_50_Nor_20250702.mat
+nnStru 1
+[15,15,15,1]
+phi_str 1
+ACC5v alw_[0,45](not(d_rel[t] - 1.4 * v_ego[t] <= 15 or v_ego[t] <= 15) or ev_[0,5](d_rel[t] - 1.4 * v_ego[t] > 15 and v_ego[t] > 15))
+parameters 13
+T=50;
+Ts=0.1;
+v_set=30;
+t_gap=1.4;
+D_default=10;
+x0_lead=70;
+v0_lead=28;
+x0_ego=10;
+v0_ego=22;
+amin_lead=-1;
+amax_lead=1;
+amin_ego=-3;
+amax_ego=2;
+testSuite 1
+ACC5v_FFNN_traingdx_15_15_15_ep_50_Nor_20250702_testCaseNum_100.mat
+testCaseNum 1
+100
+faultType 1
+undertrained
+flMode 1
+SpectAcle
+spsMetricList 5
+Tarantula
+Ochiai
+D3
+Jaccard
+Kulczynski2
+hci 1
+8
+mi 1
+5
+tops 1
+10
+popDimRatio 1
+2
+maxGen 1
+50
+checkpointStep 1
+5
+F 1
+0.5
+CR 1
+0.9
+mutSgy 1
+1
+crSgy 1
+1
+pertFactor 1
+0.5
+initMode 1
+internal
+initFolder 1
+NULL
+popInitMode 1
+hybridGuass
+filePath 2
+./results/ACC1_Phi2/DE/tops_10_popSize_20_gen_50/
+./results/ACC1_Phi2/random/tops_10_popSize_20_gen_50/
+coreNum 1
+10
+valTS 1
+ACC5v_FFNN_traingdx_15_15_15_ep_50_Nor_20250702_testCaseNum_10000_val.mat
+outPath 1
+./results/valEval/
+selSeed 1
+0
+budget 1
+10
+scaleParam 1
+2

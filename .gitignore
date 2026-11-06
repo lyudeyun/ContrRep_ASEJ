@@ -1,0 +1,12 @@
+# generated repair scripts and their logs
+test/scripts/*
+!test/scripts/.gitkeep
+output/
+
+# Simulink and Breach build artefacts
+slprj/
+*.slxc
+*.slx.autosave
+*.mex*
+
+.DS_Store
