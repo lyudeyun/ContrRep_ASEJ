@@ -1,7 +1,8 @@
-# generated repair scripts and their logs
+# generated repair scripts, their logs and their results
 test/scripts/*
 !test/scripts/.gitkeep
 output/
+results/
 
 # Simulink and Breach build artefacts
 slprj/

@@ -1,7 +1,7 @@
 # ContrRep_ASEJ
 
-This repository contains the code, the benchmarks and the experimental results of the paper
-"ContrRep: Search-Based Repair of DNN Controllers of AI-Enabled CPSs".
+This repository contains the code and the benchmarks of the paper
+"ContrRep: Search-Based Repair of DNN Controllers of AI-Enabled CPSs", together with the scripts that run its experiments and turn their results into the tables of the paper.
 
 ## Abstract
 
@@ -36,7 +36,7 @@ ContrRep_ASEJ/
 ├── benchmark/                     # the 10 faulty benchmarks (see the table above)
 ├── DE/                            # differential evolution
 │   └── fitness/                   # fitness functions (see "Naming" below)
-├── results/                       # results of all the runs reported in the paper
+├── results/                       # written by the experiments (not part of the repository)
 │   ├── <benchmark>/DE/            # ContrRep runs
 │   ├── <benchmark>/random/        # Random baseline runs
 │   └── valEval/                   # assessment of the repaired controllers on the 10^4 held-out inputs
@@ -61,7 +61,7 @@ The original Python simulators of UUV and MC (`benchmark/uuv/uuv.py`, `benchmark
 
 ## Installation
 
-1. Clone this repository. All the files are stored directly in git, so no extra step is needed to obtain the models and the results.
+1. Clone this repository. All the files are stored directly in git, so no extra step is needed to obtain the models and the test inputs.
 2. Install Breach: start MATLAB, set up a C/C++ compiler with `mex -setup`, navigate to the `breach/` folder and run `InstallBreach`.
 3. Point the configurations to your local copies of this repository and of Breach. Every configuration starts with the two placeholder paths `/path/to/ContrRep_ASEJ` and `/path/to/breach`; for example:
 
@@ -130,7 +130,8 @@ make
 
 ### 4. Analysis
 
-Each script in `analysis/` reads `results/` and prints the LaTeX rows of the tables of the paper it is named after (`rq<RQ>_tab<table>_<content>.m`); it can be run in MATLAB from any folder, e.g., `run('analysis/rq123_tab4to7_cmExec.m')`.
+Each script in `analysis/` reads the results written by steps 1–3 to `results/` and prints the LaTeX rows of the tables of the paper it is named after (`rq<RQ>_tab<table>_<content>.m`); it can be run in MATLAB from any folder, e.g., `run('analysis/rq123_tab4to7_cmExec.m')`.
+The scripts expect the 10 runs of the paper (budget 1 to 10) for every approach and benchmark, with the scale parameter 2, and also 1.5 and 3 for Tables 9–11.
 
 | Script | Paper | Content |
 |---|---|---|
